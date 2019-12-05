@@ -16,7 +16,7 @@ from jupyterhub.apihandlers.users import admin_or_self
 from kubespawner import KubeSpawner
 
 
-class BinderSpawner(KubeSpawner):
+class PersistentBinderSpawner(KubeSpawner):
     default_project = ['https://github.com/gesiscss/data_science_image', 'gesiscss/singleuser-orc:r2d-dd93b3e', 'master']
 
     def strip_repo_url(self, repo_url):
@@ -149,6 +149,18 @@ class BinderSpawner(KubeSpawner):
 
         return state
 
+    def get_env(self):
+        env = super().get_env()
+        if 'repo_url' in self.user_options:
+            env['BINDER_REPO_URL'] = self.user_options['repo_url']
+        for key in (
+                'binder_ref_url',
+                'binder_launch_host',
+                'binder_persistent_request',
+                'binder_request'):
+            if key in self.user_options:
+                env[key.upper()] = self.user_options[key]
+        return env
 
 class ProjectAPIHandler(APIHandler):
     @admin_only

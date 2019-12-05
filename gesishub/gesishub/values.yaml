@@ -96,6 +96,7 @@ binderhub:
   jupyterhub:
     custom:
       cors: *cors
+      binderauth_enabled: true
     cull:
       users: False
       # kill user pods if idle for 30 mins - default is 1 hour
@@ -169,9 +170,10 @@ binderhub:
 
           #c.KubeSpawner.extra_pod_config.update({'restart_policy': 'Never'})
           c.KubeSpawner.extra_pod_config.update({'restart_policy': 'OnFailure'})
-        binder: |
-          from extra_config import BinderSpawner
-          c.JupyterHub.spawner_class = BinderSpawner
+        00-binder: |
+          from extra_config import PersistentBinderSpawner, ProjectAPIHandler
+          c.JupyterHub.spawner_class = PersistentBinderSpawner
+          c.JupyterHub.extra_handlers = [(r'/api/projects/([^/]+)', ProjectAPIHandler), ]
     proxy:
       pdb:
         minAvailable: 0
