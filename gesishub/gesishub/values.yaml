@@ -171,9 +171,8 @@ binderhub:
           #c.KubeSpawner.extra_pod_config.update({'restart_policy': 'Never'})
           c.KubeSpawner.extra_pod_config.update({'restart_policy': 'OnFailure'})
         00-binder: |
-          from extra_config import PersistentBinderSpawner, ProjectAPIHandler
+          from extra_config import PersistentBinderSpawner
           c.JupyterHub.spawner_class = PersistentBinderSpawner
-          c.JupyterHub.extra_handlers = [(r'/api/projects/([^/]+)', ProjectAPIHandler), ]
     proxy:
       pdb:
         minAvailable: 0
